@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Not Coin Task Bot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 430px;
+            margin: 0 auto;
+            background-color: white;
+            min-height: 100vh;
+            position: relative;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding-bottom: 60px;
+        }
+        
+        .header {
+            background-color: #0088cc;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .balance {
+            background-color: #f8f8f8;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .balance h2 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .balance-amount {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0088cc;
+        }
+        
+        .content {
+            padding: 15px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #0088cc;
+        }
+        
+        .checkin-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .checkin-day {
+            background-color: #f0f0f0;
+            padding: 10px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        
+        .checkin-day.active {
+            background-color: #0088cc;
+            color: white;
+        }
+        
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #0088cc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            margin: 15px 0;
+            cursor: pointer;
+        }
+        
+        .btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            background-color: #f8f8f8;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0088cc;
+            margin: 5px 0;
+        }
+        
+        .nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-width: 430px;
+            display: flex;
+            justify-content: space-around;
+            background-color: white;
+            padding: 12px 0;
+            border-top: 1px solid #eee;
+            z-index: 1000;
+        }
+        
+        .nav-item {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            font-weight: bold;
+            padding: 5px 8px;
+            border-radius: 5px;
+            min-width: 60px;
+            cursor: pointer;
+        }
+        
+        .nav-item.active {
+            color: #0088cc;
+            background-color: #f0f8ff;
+        }
+        
+        .task-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .task-info {
+            flex: 1;
+        }
+        
+        .task-reward {
+            color: #0088cc;
+            font-weight: bold;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .payment-method {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .payment-method input {
+            margin-right: 10px;
+        }
+        
+        .ad-container {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f0f0f0;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .ad-status {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        
+        .clear-instruction {
+            background-color: #f8f8f8;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .screen {
+            display: none;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        /* New styles for withdrawal status */
+        .withdrawal-status {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f0f8ff;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+        
+        .status-success {
+            color: green;
+        }
+        
+        .status-pending {
+            color: orange;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="app">
+        <!-- Home Screen -->
+        <div id="home-screen" class="screen active">
+            <div class="header">
+                <span>Close</span>
+                <span>Not Coin</span>
+                <span>Menu</span>
+            </div>
+            
+            <div class="balance">
+                <h2>Balance</h2>
+                <div class="balance-amount" id="balance">0 NOT</div>
+            </div>
+            
+            <div class="content">
+                <h2 class="section-title">Daily Check-in Bonus</h2>
+                <div class="clear-instruction">
+                    <p>Claim your daily reward and keep your streak! Earn 2 NOT coins every day you check in.</p>
+                </div>
+                
+                <div class="checkin-grid">
+                    <div class="checkin-day">Day 1<br>+2 NOT</div>
+                    <div class="checkin-day">Day 2<br>+2 NOT</div>
+                    <div class="checkin-day">Day 3<br>+2 NOT</div>
+                    <div class="checkin-day">Day 4<br>+2 NOT</div>
+                    <div class="checkin-day">Day 5<br>+2 NOT</div>
+                    <div class="checkin-day">Day 6<br>+2 NOT</div>
+                    <div class="checkin-day">Day 7<br>+2 NOT</div>
+                    <div class="checkin-day">Day 15<br>+2 NOT</div>
+                    <div class="checkin-day">Day 17<br>+2 NOT</div>
+                    <div class="checkin-day">Day 20<br>+2 NOT</div>
+                </div>
+                
+                <button class="btn" id="checkin-btn">Wait For Next Day</button>
+            </div>
+        </div>
+        
+        <!-- Ads Task Screen -->
+        <div id="ads-screen" class="screen">
+            <div class="header">
+                <span onclick="showScreen('home-screen')">Back</span>
+                <span>Ads Tasks</span>
+                <span>Menu</span>
+            </div>
+            
+            <div class="balance">
+                <h2>Balance</h2>
+                <div class="balance-amount" id="ads-balance">0 NOT</div>
+            </div>
+            
+            <div class="content">
+                <h2 class="section-title">Ads Task Overview</h2>
+                <div class="clear-instruction">
+                    <p>Watch ads to earn NOT coins. Complete daily and hourly tasks to maximize your earnings.</p>
+                </div>
+                
+                <div class="task-item">
+                    <div class="task-info">
+                        <strong>Daily Tasks</strong>
+                        <p>Completed</p>
+                    </div>
+                    <div class="task-reward" id="daily-tasks">0/30</div>
+                </div>
+                
+                <div class="task-item">
+                    <div class="task-info">
+                        <strong>Lifetime Tasks</strong>
+                        <p>Completed Tasks</p>
+                    </div>
+                    <div class="task-reward" id="lifetime-tasks">0</div>
+                </div>
+                
+                <div class="task-item">
+                    <div class="task-info">
+                        <strong>Hourly Tasks</strong>
+                        <p>Completed</p>
+                    </div>
+                    <div class="task-reward" id="hourly-tasks">0/15</div>
+                </div>
+                
+                <div class="task-item">
+                    <div class="task-info">
+                        <strong>Total Earnings</strong>
+                    </div>
+                    <div class="task-reward" id="total-earnings">0 NOT</div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 20px; color: #ff5555;">
+                    <strong>Daily Limit Reached</strong>
+                </div>
+                
+                <div class="ad-container" id="ad-container">
+                    <p>Watch an ad to earn NOT coins</p>
+                    <button class="btn" onclick="showAdAndReward()" id="task-btn">Watch Ad (+3 NOT)</button>
+                    <div id="ad-status" class="ad-status"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Telegram Tasks Screen -->
+        <div id="tg-screen" class="screen">
+            <div class="header">
+                <span onclick="showScreen('home-screen')">Back</span>
+                <span>Telegram Tasks</span>
+                <span>Menu</span>
+            </div>
+            
+            <div class="balance">
+                <h2>Balance</h2>
+                <div class="balance-amount" id="tg-balance">0 NOT</div>
+            </div>
+            
+            <div class="content" style="text-align: center;">
+                <h2 class="section-title">Telegram Tasks</h2>
+                <div class="clear-instruction">
+                    <p>Complete Telegram tasks to earn additional NOT coins.</p>
+                </div>
+                
+                <p>No tasks available</p>
+                
+                <div style="margin-top: 30px;">
+                    <p>Join our Telegram channel to get 4 NOT free!</p>
+                    <button class="btn" onclick="window.open('https://t.me/TASKTONE', '_blank')">Join Channel</button>
+                </div>
+                
+                <div style="margin-top: 30px;">
+                    <button class="btn" onclick="verifyTelegram()" id="verify-btn">Verify Join (+4 NOT)</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Withdraw Screen -->
+        <div id="withdraw-screen" class="screen">
+            <div class="header">
+                <span onclick="showScreen('home-screen')">Back</span>
+                <span>Withdraw</span>
+                <span>Menu</span>
+            </div>
+            
+            <div class="balance">
+                <h2>Balance</h2>
+                <div class="balance-amount" id="withdraw-balance">0 NOT</div>
+            </div>
+            
+            <div class="content">
+                <h2 class="section-title">Withdraw Funds</h2>
+                <div class="clear-instruction">
+                    <p>Withdraw your NOT coins to your preferred payment method. Minimum withdrawal is 150 NOT.</p>
+                </div>
+                
+                <h3>Amount</h3>
+                <input type="number" class="input-field" id="withdraw-amount" placeholder="Enter amount">
+                <p>Minimum: 150 NOT</p>
+                
+                <h3>Withdrawal Address</h3>
+                <input type="text" class="input-field" id="withdraw-address" placeholder="Enter wallet or account address">
+                <p>Enter the address for your selected payment method (e.g., wallet address for Binance, email for PayPal)</p>
+                
+                <h3>Payment Method</h3>
+                <div class="payment-method">
+                    <input type="radio" name="payment" id="binance" checked>
+                    <label for="binance">Binance</label>
+                </div>
+                
+                <div class="payment-method">
+                    <input type="radio" name="payment" id="atani">
+                    <label for="atani">Atani (ID: 1021)</label>
+                </div>
+                
+                <button class="btn" onclick="requestWithdrawal()">Request Withdrawal</button>
+                
+                <!-- New withdrawal status display -->
+                <div id="withdrawal-status" class="withdrawal-status">
+                    <h3>Withdrawal Status</h3>
+                    <p id="status-message"></p>
+                    <p id="channel-link" style="margin-top: 10px;"></p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Profile Screen -->
+        <div id="profile-screen" class="screen">
+            <div class="header">
+                <span onclick="showScreen('home-screen')">Back</span>
+                <span>Profile</span>
+                <span>Menu</span>
+            </div>
+            
+            <div class="balance">
+                <h2>Balance</h2>
+                <div class="balance-amount" id="profile-balance">0 NOT</div>
+            </div>
+            
+            <div class="content">
+                <h2 class="section-title">Not Coin</h2>
+                <p style="text-align: center; margin-bottom: 20px;">Joined July 29, 2025</p>
+                
+                <h2 class="section-title">Your Statistics</h2>
+                <div class="clear-instruction">
+                    <p>View your earnings and activity statistics.</p>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <p>Total Earned</p>
+                        <div class="stat-value" id="total-earned">0</div>
+                        <p>NOT</p>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <p>Current Streak</p>
+                        <div class="stat-value" id="current-streak">0</div>
+                        <p>days</p>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <p>Tasks Done</p>
+                        <div class="stat-value" id="tasks-done">0</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <p>Withdrawals</p>
+                        <div class="stat-value" id="withdrawals-count">0</div>
+                    </div>
+                </div>
+                
+                <h3 style="margin-top: 30px;">Help Center</h3>
+                <div class="clear-instruction">
+                    <p>Contact support if you need any assistance.</p>
+                </div>
+                
+                <h4 style="margin-top: 15px;">Developer Contact</h4>
+                <p>Telegram: @shap642</p>
+                <p>Atani ID: 1021</p>
+                
+                <button class="btn" style="background-color: #ff5555; margin-top: 30px;" onclick="logout()">Log Out</button>
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <div class="nav">
+            <div class="nav-item active" onclick="showScreen('home-screen')">
+                <div>Home</div>
+            </div>
+            <div class="nav-item" onclick="showScreen('ads-screen')">
+                <div>Ads Task</div>
+            </div>
+            <div class="nav-item" onclick="showScreen('tg-screen')">
+                <div>TG Tasks</div>
+            </div>
+            <div class="nav-item" onclick="showScreen('withdraw-screen')">
+                <div>Withdraw</div>
+            </div>
+            <div class="nav-item" onclick="showScreen('profile-screen')">
+                <div>Profile</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Giga Pub Ads Script -->
+    <script data-project-id="1026">
+      !function(){
+        var s=document.currentScript,p=s.getAttribute('data-project-id')||'default';
+        var d=['https://ad.gigapub.tech','https://ru-ad.gigapub.tech'],i=0,t,sc;
+        function l(){
+          sc=document.createElement('script');
+          sc.async=true;
+          sc.src=d[i]+'/script?id='+p;
+          clearTimeout(t);
+          t=setTimeout(function(){
+            sc.onload=sc.onerror=null;
+            sc.src='';
+            if(++i<d.length)l();
+          },15000);
+          sc.onload=function(){clearTimeout(t)};
+          sc.onerror=function(){clearTimeout(t);if(++i<d.length)l()};
+          document.head.appendChild(sc);
+        }
+        l();
+      }();
+    </script>
+
+    <script>
+        // User data with referral tracking
+        let userData = {
+            userId: generateUserId(),
+            balance: 0,
+            dailyTasksCompleted: 0,
+            lifetimeTasksCompleted: 0,
+            hourlyTasksCompleted: 0,
+            totalEarnings: 0,
+            currentStreak: 0,
+            tasksDone: 0,
+            withdrawals: 0,
+            lastCheckin: null,
+            lastTaskTime: null,
+            telegramVerified: false,
+            ataniId: "1021"
+        };
+        
+        // Telegram channel configuration
+        const TELEGRAM_CHANNEL_LINK = "https://t.me/+vOToXtLU-JJhNzJl";
+        
+        // Initialize the app
+        function initApp() {
+            // Load saved data from localStorage
+            loadUserData();
+            
+            updateBalances();
+            updateStats();
+            
+            // Check if user can check in today
+            const today = new Date().toDateString();
+            if (userData.lastCheckin !== today) {
+                document.getElementById('checkin-btn').textContent = 'Claim Daily Reward';
+                document.getElementById('checkin-btn').disabled = false;
+            }
+            
+            // Check if user can complete tasks
+            checkTaskAvailability();
+        }
+        
+        // Generate a unique user ID
+        function generateUserId() {
+            return 'USER' + Math.floor(100000 + Math.random() * 900000);
+        }
+        
+        // Load user data from localStorage
+        function loadUserData() {
+            try {
+                const savedData = localStorage.getItem('notCoinUserData');
+                if (savedData) {
+                    const parsedData = JSON.parse(savedData);
+                    // Merge with default values
+                    userData = {
+                        ...userData,
+                        ...parsedData
+                    };
+                }
+            } catch (e) {
+                console.error('Error loading user data:', e);
+                localStorage.removeItem('notCoinUserData');
+            }
+        }
+        
+        // Save user data to localStorage
+        function saveUserData() {
+            try {
+                localStorage.setItem('notCoinUserData', JSON.stringify(userData));
+            } catch (e) {
+                console.error('Error saving user data:', e);
+            }
+        }
+        
+        // Show different screens
+        function showScreen(screenId) {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(div => {
+                div.classList.remove('active');
+            });
+            
+            // Show the selected screen
+            document.getElementById(screenId).classList.add('active');
+            
+            // Update nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Update active nav item based on screen
+            const navItems = document.querySelectorAll('.nav-item');
+            if (screenId === 'home-screen') navItems[0].classList.add('active');
+            else if (screenId === 'ads-screen') navItems[1].classList.add('active');
+            else if (screenId === 'tg-screen') navItems[2].classList.add('active');
+            else if (screenId === 'withdraw-screen') navItems[3].classList.add('active');
+            else if (screenId === 'profile-screen') navItems[4].classList.add('active');
+            
+            // Update data for specific screens
+            if (screenId === 'ads-screen') updateTaskCounts();
+            if (screenId === 'profile-screen') updateStats();
+            
+            // Update all balances
+            updateBalances();
+        }
+        
+        // Update all balance displays
+        function updateBalances() {
+            document.querySelectorAll('.balance-amount').forEach(el => {
+                el.textContent = userData.balance + ' NOT';
+            });
+        }
+        
+        // Update profile statistics
+        function updateStats() {
+            document.getElementById('total-earned').textContent = userData.totalEarnings;
+            document.getElementById('current-streak').textContent = userData.currentStreak;
+            document.getElementById('tasks-done').textContent = userData.tasksDone;
+            document.getElementById('withdrawals-count').textContent = userData.withdrawals;
+        }
+        
+        // Update task counts
+        function updateTaskCounts() {
+            document.getElementById('daily-tasks').textContent = userData.dailyTasksCompleted + '/30';
+            document.getElementById('lifetime-tasks').textContent = userData.lifetimeTasksCompleted;
+            document.getElementById('hourly-tasks').textContent = userData.hourlyTasksCompleted + '/15';
+            document.getElementById('total-earnings').textContent = userData.totalEarnings + ' NOT';
+        }
+        
+        // Check if tasks are available
+        function checkTaskAvailability() {
+            const now = new Date();
+            const taskBtn = document.getElementById('task-btn');
+            
+            // Reset hourly tasks if it's a new hour
+            if (userData.lastTaskTime) {
+                const lastHour = new Date(userData.lastTaskTime).getHours();
+                const currentHour = now.getHours();
+                if (currentHour !== lastHour) {
+                    userData.hourlyTasksCompleted = 0;
+                    saveUserData();
+                }
+            }
+            
+            // Check daily limit
+            if (userData.dailyTasksCompleted >= 30) {
+                taskBtn.disabled = true;
+                taskBtn.textContent = 'Daily Limit Reached';
+                return;
+            }
+            
+            // Check hourly limit
+            if (userData.hourlyTasksCompleted >= 15) {
+                taskBtn.disabled = true;
+                taskBtn.textContent = 'Hourly Limit Reached';
+                return;
+            }
+            
+            // Task is available
+            taskBtn.disabled = false;
+            taskBtn.textContent = 'Watch Ad (+3 NOT)';
+        }
+        
+        // Show ad and reward user
+        function showAdAndReward() {
+            const taskBtn = document.getElementById('task-btn');
+            const adStatus = document.getElementById('ad-status');
+            
+            taskBtn.disabled = true;
+            taskBtn.textContent = 'Loading Ad...';
+            adStatus.textContent = '';
+            adStatus.style.color = '';
+            
+            // Show ad from GigaPub
+            if (window.showGiga) {
+                window.showGiga()
+                    .then(() => {
+                        // Ad completed successfully
+                        adStatus.textContent = 'Ad completed successfully!';
+                        adStatus.style.color = 'green';
+                        completeTask();
+                    })
+                    .catch(e => {
+                        // Ad failed
+                        console.error('Ad error:', e);
+                        adStatus.textContent = 'Ad failed. Please try again.';
+                        adStatus.style.color = 'red';
+                        taskBtn.disabled = false;
+                        taskBtn.textContent = 'Watch Ad (+3 NOT)';
+                    });
+            } else {
+                // Fallback if ad script not loaded
+                adStatus.textContent = 'Ad service not available. Trying fallback...';
+                adStatus.style.color = 'orange';
+                
+                setTimeout(() => {
+                    completeTask();
+                    adStatus.textContent = 'Fallback reward granted!';
+                    adStatus.style.color = 'green';
+                }, 1000);
+            }
+        }
+        
+        // Complete a task
+        function completeTask() {
+            const taskBtn = document.getElementById('task-btn');
+            
+            userData.balance += 3;
+            userData.totalEarnings += 3;
+            userData.dailyTasksCompleted++;
+            userData.lifetimeTasksCompleted++;
+            userData.hourlyTasksCompleted++;
+            userData.tasksDone++;
+            userData.lastTaskTime = new Date();
+            
+            updateBalances();
+            updateTaskCounts();
+            updateStats();
+            checkTaskAvailability();
+            saveUserData();
+            
+            taskBtn.textContent = 'Watch Ad (+3 NOT)';
+        }
+        
+        // Claim daily reward
+        function claimDailyReward() {
+            const today = new Date().toDateString();
+            const reward = 2;
+            
+            userData.balance += reward;
+            userData.totalEarnings += reward;
+            userData.lastCheckin = today;
+            userData.currentStreak++;
+            
+            updateBalances();
+            updateStats();
+            saveUserData();
+            
+            document.getElementById('checkin-btn').textContent = 'Wait For Next Day';
+            document.getElementById('checkin-btn').disabled = true;
+            
+            alert(`Daily reward claimed! You earned ${reward} NOT.`);
+        }
+        
+        // Verify Telegram join
+        function verifyTelegram() {
+            if (userData.telegramVerified) {
+                alert('You have already verified your Telegram join.');
+                return;
+            }
+            
+            userData.balance += 4;
+            userData.totalEarnings += 4;
+            userData.telegramVerified = true;
+            
+            updateBalances();
+            updateStats();
+            saveUserData();
+            
+            document.getElementById('verify-btn').disabled = true;
+            document.getElementById('verify-btn').textContent = 'Already Verified';
+            
+            alert('Telegram join verified! You earned 4 NOT.');
+        }
+        
+        // Request withdrawal - sends to Telegram channel
+        function requestWithdrawal() {
+            const amount = parseInt(document.getElementById('withdraw-amount').value);
+            const address = document.getElementById('withdraw-address').value.trim();
+            const isAtani = document.getElementById('atani').checked;
+            const method = isAtani ? 'Atani (ID: 1021)' : 'Binance';
+            
+            if (!amount || isNaN(amount)) {
+                alert('Please enter a valid amount.');
+                return;
+            }
+            
+            if (amount < 150) {
+                alert('Minimum withdrawal amount is 150 NOT.');
+                return;
+            }
+            
+            if (amount > userData.balance) {
+                alert('Insufficient balance.');
+                return;
+            }
+            
+            if (!address) {
+                alert('Please enter a valid withdrawal address.');
+                return;
+            }
+            
+            // Deduct from balance
+            userData.balance -= amount;
+            userData.withdrawals++;
+            updateBalances();
+            saveUserData();
+            
+            // Prepare message for Telegram channel
+            const message = `📢 নতুন উইথড্র রিকুয়েস্ট!\n\n` +
+                           `• ইউজার: ${userData.userId}\n` +
+                           `• পরিমাণ: ${amount} NOT\n` +
+                           `• মেথড: ${method}\n` +
+                           `• অ্যাড্রেস: ${address}\n` +
+                           `• তারিখ: ${new Date().toLocaleString()}`;
+            
+            // Send to Telegram channel
+            sendToTelegramChannel(message);
+            
+            // Show status to user
+            const statusDiv = document.getElementById('withdrawal-status');
+            const statusMessage = document.getElementById('status-message');
+            const channelLink = document.getElementById('channel-link');
+            
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'withdrawal-status status-pending';
+            statusMessage.textContent = `Withdrawal request for ${amount} NOT submitted successfully!`;
+            channelLink.innerHTML = `<a href="${TELEGRAM_CHANNEL_LINK}" target="_blank">View in Telegram Channel</a>`;
+            
+            // Reset form
+            document.getElementById('withdraw-amount').value = '';
+            document.getElementById('withdraw-address').value = '';
+        }
+        
+        // Send message to Telegram channel
+        function sendToTelegramChannel(message) {
+            // Create a share link that opens Telegram with pre-filled message
+            const shareLink = `https://t.me/share/url?url=${encodeURIComponent(TELEGRAM_CHANNEL_LINK)}&text=${encodeURIComponent(message)}`;
+            
+            // Open in new tab (this is just for demo - in real app you would use a bot API)
+            window.open(shareLink, '_blank');
+            
+            // Note: In a real implementation, you would:
+            // 1. Have a server endpoint that uses the Telegram Bot API
+            // 2. Or use Telegram Webhooks
+            // But since we don't have a server, we're using this share method
+        }
+        
+        // Logout
+        function logout() {
+            if (confirm('Are you sure you want to log out?')) {
+                alert('You have been logged out. This is a demo, so no actual logout occurs.');
+            }
+        }
+        
+        // Event listeners
+        document.getElementById('checkin-btn').addEventListener('click', function() {
+            if (this.textContent === 'Claim Daily Reward') {
+                claimDailyReward();
+            }
+        });
+        
+        // Initialize the app when loaded
+        window.addEventListener('DOMContentLoaded', initApp);
+        
+        // Ad fallback mechanism
+        window.AdGigaFallback = function() {
+            return new Promise((resolve) => {
+                setTimeout(resolve, 1000);
+            });
+        };
+        
+        if (window.showGiga === undefined) {
+            window.showGiga = () => window.AdGigaFallback();
+        }
+    </script>
+</body>
+</html>
