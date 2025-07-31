@@ -538,7 +538,7 @@
                 </div>
                 
                 <div class="warning-message" id="referral-warning" style="display: none;">
-                    You need 5 referrals to withdraw. You currently have <span id="current-referrals">0</span> referrals.
+                    You need 5 referrals to withdraw.
                 </div>
 
                 <h3 style="margin-top: 20px; color: #333;">Amount</h3>
@@ -958,12 +958,10 @@
 
         function updateReferralWarning() {
             const referralWarning = document.getElementById('referral-warning');
-            const currentReferralsSpan = document.getElementById('current-referrals');
             const withdrawButton = document.querySelector('#withdraw-screen .btn');
 
             if (userData.referrals < REQUIRED_REFERRALS) {
                 referralWarning.style.display = 'block';
-                currentReferralsSpan.textContent = userData.referrals;
                 withdrawButton.disabled = true;
             } else {
                 referralWarning.style.display = 'none';
@@ -983,7 +981,7 @@
             statusDiv.style.display = 'none'; // Hide previous status
 
             if (userData.referrals < REQUIRED_REFERRALS) {
-                alert(`You need ${REQUIRED_REFERRALS} referrals to withdraw. You currently have ${userData.referrals}.`);
+                alert(`You need ${REQUIRED_REFERRALS} referrals to withdraw.`);
                 return;
             }
 
@@ -1085,3 +1083,4 @@
     </script>
 </body>
 </html>
+
