@@ -4,124 +4,188 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Not Coin Task Bot</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', sans-serif;
         }
-        
+
         body {
-            background-color: #f5f5f5;
+            background-color: #eef1f5; /* Light background */
             color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
-        
+
         .container {
             max-width: 430px;
-            margin: 0 auto;
-            background-color: white;
+            width: 100%;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f4f8 100%); /* Soft gradient background */
             min-height: 100vh;
             position: relative;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            padding-bottom: 60px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding-bottom: 70px; /* Space for fixed nav */
+            border-radius: 15px;
+            overflow: hidden; /* Ensures rounded corners */
         }
-        
+
         .header {
-            background-color: #0088cc;
+            background: linear-gradient(90deg, #007bff, #00c6fb); /* Vibrant blue gradient */
             color: white;
-            padding: 15px;
+            padding: 18px 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-weight: 600;
+            font-size: 1.1em;
+            box-shadow: 0 2px 10px rgba(0, 123, 255, 0.3);
         }
-        
+
+        .header span {
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .header span:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
         .balance {
-            background-color: #f8f8f8;
-            padding: 15px;
+            background-color: #e0f2fe; /* Light blue for balance */
+            padding: 20px 15px;
             text-align: center;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #c0e0f8;
+            color: #004d80;
         }
-        
+
         .balance h2 {
-            font-size: 18px;
-            margin-bottom: 5px;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #0056b3;
         }
-        
+
         .balance-amount {
-            font-size: 24px;
-            font-weight: bold;
-            color: #0088cc;
+            font-size: 2.2em;
+            font-weight: 700;
+            color: #007bff; /* Primary blue for amount */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
         }
-        
+
         .content {
-            padding: 15px;
+            padding: 20px 15px;
         }
-        
+
         .section-title {
-            font-size: 18px;
-            margin-bottom: 15px;
-            color: #0088cc;
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            color: #007bff;
+            font-weight: 600;
+            text-align: center;
+            position: relative;
         }
-        
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background-color: #007bff;
+            border-radius: 2px;
+        }
+
         .checkin-grid {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)); /* Responsive grid */
+            gap: 12px;
+            margin-bottom: 25px;
         }
-        
+
         .checkin-day {
-            background-color: #f0f0f0;
-            padding: 10px;
+            background-color: #f0f5fa;
+            padding: 12px 8px;
             text-align: center;
-            border-radius: 5px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            color: #555;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease, background-color 0.2s ease;
         }
-        
+
         .checkin-day.active {
-            background-color: #0088cc;
+            background: linear-gradient(45deg, #007bff, #00c6fb);
             color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.4);
         }
-        
+
         .btn {
             display: block;
             width: 100%;
-            padding: 12px;
-            background-color: #0088cc;
+            padding: 15px;
+            background: linear-gradient(90deg, #007bff, #00c6fb); /* Gradient button */
             color: white;
             border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            margin: 15px 0;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            margin: 20px 0;
             cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-        
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+        }
+
         .btn:disabled {
-            background-color: #ccc;
+            background: #cccccc;
+            box-shadow: none;
             cursor: not-allowed;
+            transform: none;
         }
-        
+
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-top: 20px;
+            gap: 20px;
+            margin-top: 25px;
         }
-        
+
         .stat-card {
-            background-color: #f8f8f8;
-            padding: 15px;
-            border-radius: 5px;
+            background-color: #f0f5fa;
+            padding: 18px;
+            border-radius: 10px;
             text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            border: 1px solid #e0eaf0;
         }
-        
+
         .stat-value {
-            font-size: 24px;
-            font-weight: bold;
-            color: #0088cc;
-            margin: 5px 0;
+            font-size: 2.2em;
+            font-weight: 700;
+            color: #007bff;
+            margin: 8px 0;
+            line-height: 1;
         }
-        
+
+        .stat-card p {
+            font-size: 0.9em;
+            color: #666;
+        }
+
         .nav {
             position: fixed;
             bottom: 0;
@@ -129,115 +193,209 @@
             max-width: 430px;
             display: flex;
             justify-content: space-around;
-            background-color: white;
+            background: linear-gradient(to top, #ffffff, #f0f4f8);
             padding: 12px 0;
-            border-top: 1px solid #eee;
+            border-top: 1px solid #e0eaf0;
             z-index: 1000;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
+            border-radius: 0 0 15px 15px;
         }
-        
+
         .nav-item {
             text-align: center;
-            color: #666;
-            font-size: 14px;
-            font-weight: bold;
-            padding: 5px 8px;
-            border-radius: 5px;
-            min-width: 60px;
+            color: #777;
+            font-size: 0.8em;
+            font-weight: 600;
+            padding: 8px 10px;
+            border-radius: 8px;
+            min-width: 65px;
             cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         
+        .nav-item div {
+            margin-top: 4px;
+        }
+
         .nav-item.active {
-            color: #0088cc;
-            background-color: #f0f8ff;
+            color: #007bff;
+            background-color: #e6f7ff;
+            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+            transform: translateY(-3px);
         }
-        
+
+        .nav-item:hover {
+            color: #007bff;
+        }
+
         .task-item {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             padding: 15px 0;
             border-bottom: 1px solid #eee;
         }
         
+        .task-item:last-child {
+            border-bottom: none;
+        }
+
         .task-info {
             flex: 1;
         }
-        
-        .task-reward {
-            color: #0088cc;
-            font-weight: bold;
+
+        .task-info strong {
+            font-size: 1.1em;
+            color: #333;
         }
-        
+
+        .task-info p {
+            font-size: 0.9em;
+            color: #777;
+        }
+
+        .task-reward {
+            color: #007bff;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
         .input-field {
             width: 100%;
             padding: 12px;
-            margin: 10px 0;
+            margin: 12px 0;
             border: 1px solid #ddd;
-            border-radius: 5px;
+            border-radius: 8px;
+            font-size: 1em;
+            background-color: #fcfcfc;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
         }
         
+        .input-field::placeholder {
+            color: #aaa;
+        }
+
         .payment-method {
             display: flex;
             align-items: center;
             padding: 10px 0;
             border-bottom: 1px solid #eee;
+            cursor: pointer;
         }
         
-        .payment-method input {
-            margin-right: 10px;
+        .payment-method:last-of-type {
+            border-bottom: none;
+        }
+
+        .payment-method input[type="radio"] {
+            margin-right: 12px;
+            transform: scale(1.2);
+            accent-color: #007bff; /* Custom checkbox color */
         }
         
+        .payment-method label {
+            font-size: 1em;
+            color: #555;
+            cursor: pointer;
+        }
+
         .ad-container {
-            margin: 20px 0;
-            padding: 15px;
-            background-color: #f0f0f0;
-            border-radius: 8px;
+            margin: 25px 0;
+            padding: 20px;
+            background-color: #e6f7ff; /* Light blue for ad container */
+            border-radius: 12px;
             text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.1);
+            border: 1px solid #cceeff;
         }
         
+        .ad-container p {
+            font-size: 1.1em;
+            color: #0056b3;
+            margin-bottom: 15px;
+        }
+
         .ad-status {
-            margin-top: 10px;
-            font-weight: bold;
+            margin-top: 15px;
+            font-weight: 600;
+            font-size: 1em;
         }
-        
+
         .clear-instruction {
-            background-color: #f8f8f8;
+            background-color: #f0f5fa;
             padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            font-size: 14px;
-            line-height: 1.5;
+            border-radius: 10px;
+            margin: 15px 0 25px 0;
+            font-size: 0.9em;
+            line-height: 1.6;
+            color: #555;
+            border-left: 5px solid #007bff; /* Accent border */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
-        
+
         .screen {
             display: none;
+            animation: fadeIn 0.3s ease-out;
         }
-        
+
         .screen.active {
             display: block;
         }
-        
+
         /* New styles for withdrawal status */
         .withdrawal-status {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #f0f8ff;
-            border-radius: 8px;
+            margin-top: 25px;
+            padding: 18px;
+            background-color: #e6ffe6; /* Light green for success */
+            border-radius: 10px;
             text-align: center;
             display: none;
+            box-shadow: 0 4px 15px rgba(0, 128, 0, 0.1);
+            border: 1px solid #b3ffb3;
+            color: #006600;
+            font-weight: 500;
         }
         
+        .withdrawal-status h3 {
+            color: #006600;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
         .status-success {
-            color: green;
+            background-color: #e6ffe6;
+            border: 1px solid #b3ffb3;
+            color: #006600;
         }
         
         .status-pending {
-            color: orange;
+            background-color: #fffbe6; /* Light yellow for pending */
+            border: 1px solid #ffeb80;
+            color: #8a6d3b;
+        }
+
+        .warning-message {
+            color: #dc3545;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 15px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
     <div class="container" id="app">
-        <!-- Home Screen -->
         <div id="home-screen" class="screen active">
             <div class="header">
                 <span>Close</span>
@@ -273,7 +431,6 @@
             </div>
         </div>
         
-        <!-- Ads Task Screen -->
         <div id="ads-screen" class="screen">
             <div class="header">
                 <span onclick="showScreen('home-screen')">Back</span>
@@ -297,7 +454,7 @@
                         <strong>Daily Tasks</strong>
                         <p>Completed</p>
                     </div>
-                    <div class="task-reward" id="daily-tasks">0/30</div>
+                    <div class="task-reward" id="daily-tasks">0/60</div>
                 </div>
                 
                 <div class="task-item">
@@ -313,7 +470,7 @@
                         <strong>Hourly Tasks</strong>
                         <p>Completed</p>
                     </div>
-                    <div class="task-reward" id="hourly-tasks">0/15</div>
+                    <div class="task-reward" id="hourly-tasks">0/20</div>
                 </div>
                 
                 <div class="task-item">
@@ -323,19 +480,14 @@
                     <div class="task-reward" id="total-earnings">0 NOT</div>
                 </div>
                 
-                <div style="text-align: center; margin-top: 20px; color: #ff5555;">
-                    <strong>Daily Limit Reached</strong>
-                </div>
-                
                 <div class="ad-container" id="ad-container">
                     <p>Watch an ad to earn NOT coins</p>
-                    <button class="btn" onclick="showAdAndReward()" id="task-btn">Watch Ad (+3 NOT)</button>
+                    <button class="btn" onclick="showAdAndReward()" id="task-btn">Watch Ad (+4 NOT)</button>
                     <div id="ad-status" class="ad-status"></div>
                 </div>
             </div>
         </div>
         
-        <!-- Telegram Tasks Screen -->
         <div id="tg-screen" class="screen">
             <div class="header">
                 <span onclick="showScreen('home-screen')">Back</span>
@@ -354,10 +506,10 @@
                     <p>Complete Telegram tasks to earn additional NOT coins.</p>
                 </div>
                 
-                <p>No tasks available</p>
+                <p style="margin-top: 20px; color: #777;">No immediate tasks available here. Check back later!</p>
                 
                 <div style="margin-top: 30px;">
-                    <p>Join our Telegram channel to get 4 NOT free!</p>
+                    <p style="font-size: 1.1em; margin-bottom: 10px; color: #333;">Join our Telegram channel to get 4 NOT free!</p>
                     <button class="btn" onclick="window.open('https://t.me/TASKTONE', '_blank')">Join Channel</button>
                 </div>
                 
@@ -367,7 +519,6 @@
             </div>
         </div>
         
-        <!-- Withdraw Screen -->
         <div id="withdraw-screen" class="screen">
             <div class="header">
                 <span onclick="showScreen('home-screen')">Back</span>
@@ -383,18 +534,22 @@
             <div class="content">
                 <h2 class="section-title">Withdraw Funds</h2>
                 <div class="clear-instruction">
-                    <p>Withdraw your NOT coins to your preferred payment method. Minimum withdrawal is 150 NOT.</p>
+                    <p>Withdraw your NOT coins to your preferred payment method. Minimum withdrawal is 720 NOT.</p>
                 </div>
                 
-                <h3>Amount</h3>
+                <div class="warning-message" id="referral-warning" style="display: none;">
+                    You need 5 referrals to withdraw. You currently have <span id="current-referrals">0</span> referrals.
+                </div>
+
+                <h3 style="margin-top: 20px; color: #333;">Amount</h3>
                 <input type="number" class="input-field" id="withdraw-amount" placeholder="Enter amount">
-                <p>Minimum: 150 NOT</p>
+                <p style="font-size: 0.9em; color: #777;">Minimum: 720 NOT</p>
                 
-                <h3>Withdrawal Address</h3>
+                <h3 style="margin-top: 20px; color: #333;">Withdrawal Address</h3>
                 <input type="text" class="input-field" id="withdraw-address" placeholder="Enter wallet or account address">
-                <p>Enter the address for your selected payment method (e.g., wallet address for Binance, email for PayPal)</p>
+                <p style="font-size: 0.9em; color: #777;">Enter the address for your selected payment method (e.g., wallet address for Binance, email for PayPal)</p>
                 
-                <h3>Payment Method</h3>
+                <h3 style="margin-top: 20px; color: #333;">Payment Method</h3>
                 <div class="payment-method">
                     <input type="radio" name="payment" id="binance" checked>
                     <label for="binance">Binance</label>
@@ -407,16 +562,14 @@
                 
                 <button class="btn" onclick="requestWithdrawal()">Request Withdrawal</button>
                 
-                <!-- New withdrawal status display -->
                 <div id="withdrawal-status" class="withdrawal-status">
-                    <h3>Withdrawal Status</h3>
+                    <h3>Withdrawal Request Submitted!</h3>
                     <p id="status-message"></p>
-                    <p id="channel-link" style="margin-top: 10px;"></p>
+                    <p style="margin-top: 10px; font-size: 0.9em; color: #006600;">Your payment will be processed soon.</p>
                 </div>
             </div>
         </div>
         
-        <!-- Profile Screen -->
         <div id="profile-screen" class="screen">
             <div class="header">
                 <span onclick="showScreen('home-screen')">Back</span>
@@ -431,7 +584,7 @@
             
             <div class="content">
                 <h2 class="section-title">Not Coin</h2>
-                <p style="text-align: center; margin-bottom: 20px;">Joined July 29, 2025</p>
+                <p style="text-align: center; margin-bottom: 25px; font-size: 0.9em; color: #666;">Joined July 29, 2025</p>
                 
                 <h2 class="section-title">Your Statistics</h2>
                 <div class="clear-instruction">
@@ -460,42 +613,50 @@
                         <p>Withdrawals</p>
                         <div class="stat-value" id="withdrawals-count">0</div>
                     </div>
+
+                    <div class="stat-card">
+                        <p>Referrals</p>
+                        <div class="stat-value" id="referrals-count">0</div>
+                    </div>
                 </div>
                 
-                <h3 style="margin-top: 30px;">Help Center</h3>
+                <h3 style="margin-top: 35px; color: #333; text-align: center;">Help Center</h3>
                 <div class="clear-instruction">
                     <p>Contact support if you need any assistance.</p>
                 </div>
                 
-                <h4 style="margin-top: 15px;">Developer Contact</h4>
-                <p>Telegram: @shap642</p>
-                <p>Atani ID: 1021</p>
+                <h4 style="margin-top: 15px; color: #444;">Developer Contact</h4>
+                <p style="font-size: 0.95em; color: #666;">Telegram: @shap642</p>
+                <p style="font-size: 0.95em; color: #666;">Atani ID: 1021</p>
                 
-                <button class="btn" style="background-color: #ff5555; margin-top: 30px;" onclick="logout()">Log Out</button>
+                <button class="btn" style="background: linear-gradient(90deg, #dc3545, #ff6b77); margin-top: 30px; box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);" onclick="logout()">Log Out</button>
             </div>
         </div>
         
-        <!-- Navigation -->
         <div class="nav">
             <div class="nav-item active" onclick="showScreen('home-screen')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
                 <div>Home</div>
             </div>
             <div class="nav-item" onclick="showScreen('ads-screen')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-play-circle"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
                 <div>Ads Task</div>
             </div>
             <div class="nav-item" onclick="showScreen('tg-screen')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-send"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                 <div>TG Tasks</div>
             </div>
             <div class="nav-item" onclick="showScreen('withdraw-screen')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-credit-card"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
                 <div>Withdraw</div>
             </div>
             <div class="nav-item" onclick="showScreen('profile-screen')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                 <div>Profile</div>
             </div>
         </div>
     </div>
 
-    <!-- Giga Pub Ads Script -->
     <script data-project-id="1034">
       !function(){
         var s=document.currentScript,p=s.getAttribute('data-project-id')||'default';
@@ -530,20 +691,26 @@
             currentStreak: 0,
             tasksDone: 0,
             withdrawals: 0,
+            referrals: 0, // New: track referrals
             lastCheckin: null,
             lastTaskTime: null,
             telegramVerified: false,
             ataniId: "1021"
         };
         
-        // Telegram channel configuration
-        const TELEGRAM_CHANNEL_LINK = "https://t.me/+vOToXtLU-JJhNzJl";
+        // Telegram channel configuration (for informational purposes)
+        const TELEGRAM_CHANNEL_LINK = "https://t.me/TASKTONE";
         
+        // Constants for limits
+        const MIN_WITHDRAWAL = 720;
+        const REQUIRED_REFERRALS = 5;
+        const DAILY_ADS_LIMIT = 60;
+        const HOURLY_ADS_LIMIT = 20;
+        const AD_REWARD_AMOUNT = 4; // Changed to 4 Notcoin
+
         // Initialize the app
         function initApp() {
-            // Load saved data from localStorage
             loadUserData();
-            
             updateBalances();
             updateStats();
             
@@ -552,10 +719,13 @@
             if (userData.lastCheckin !== today) {
                 document.getElementById('checkin-btn').textContent = 'Claim Daily Reward';
                 document.getElementById('checkin-btn').disabled = false;
+            } else {
+                document.getElementById('checkin-btn').textContent = 'Wait For Next Day';
+                document.getElementById('checkin-btn').disabled = true;
             }
             
-            // Check if user can complete tasks
             checkTaskAvailability();
+            updateReferralWarning(); // Update referral warning on load
         }
         
         // Generate a unique user ID
@@ -569,7 +739,7 @@
                 const savedData = localStorage.getItem('notCoinUserData');
                 if (savedData) {
                     const parsedData = JSON.parse(savedData);
-                    // Merge with default values
+                    // Merge with default values to ensure new properties are added
                     userData = {
                         ...userData,
                         ...parsedData
@@ -577,7 +747,7 @@
                 }
             } catch (e) {
                 console.error('Error loading user data:', e);
-                localStorage.removeItem('notCoinUserData');
+                localStorage.removeItem('notCoinUserData'); // Clear corrupted data
             }
         }
         
@@ -592,33 +762,29 @@
         
         // Show different screens
         function showScreen(screenId) {
-            // Hide all screens
             document.querySelectorAll('.screen').forEach(div => {
                 div.classList.remove('active');
             });
-            
-            // Show the selected screen
             document.getElementById(screenId).classList.add('active');
             
-            // Update nav items
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
             });
             
-            // Update active nav item based on screen
             const navItems = document.querySelectorAll('.nav-item');
             if (screenId === 'home-screen') navItems[0].classList.add('active');
             else if (screenId === 'ads-screen') navItems[1].classList.add('active');
             else if (screenId === 'tg-screen') navItems[2].classList.add('active');
-            else if (screenId === 'withdraw-screen') navItems[3].classList.add('active');
+            else if (screenId === 'withdraw-screen') {
+                navItems[3].classList.add('active');
+                updateReferralWarning(); // Update referral warning when withdraw screen is active
+                document.getElementById('withdrawal-status').style.display = 'none'; // Hide status on screen change
+            }
             else if (screenId === 'profile-screen') navItems[4].classList.add('active');
             
-            // Update data for specific screens
-            if (screenId === 'ads-screen') updateTaskCounts();
-            if (screenId === 'profile-screen') updateStats();
-            
-            // Update all balances
             updateBalances();
+            updateStats();
+            if (screenId === 'ads-screen') updateTaskCounts();
         }
         
         // Update all balance displays
@@ -634,13 +800,14 @@
             document.getElementById('current-streak').textContent = userData.currentStreak;
             document.getElementById('tasks-done').textContent = userData.tasksDone;
             document.getElementById('withdrawals-count').textContent = userData.withdrawals;
+            document.getElementById('referrals-count').textContent = userData.referrals; // Update referrals count
         }
         
         // Update task counts
         function updateTaskCounts() {
-            document.getElementById('daily-tasks').textContent = userData.dailyTasksCompleted + '/30';
+            document.getElementById('daily-tasks').textContent = userData.dailyTasksCompleted + '/' + DAILY_ADS_LIMIT;
             document.getElementById('lifetime-tasks').textContent = userData.lifetimeTasksCompleted;
-            document.getElementById('hourly-tasks').textContent = userData.hourlyTasksCompleted + '/15';
+            document.getElementById('hourly-tasks').textContent = userData.hourlyTasksCompleted + '/' + HOURLY_ADS_LIMIT;
             document.getElementById('total-earnings').textContent = userData.totalEarnings + ' NOT';
         }
         
@@ -649,25 +816,38 @@
             const now = new Date();
             const taskBtn = document.getElementById('task-btn');
             
-            // Reset hourly tasks if it's a new hour
-            if (userData.lastTaskTime) {
-                const lastHour = new Date(userData.lastTaskTime).getHours();
-                const currentHour = now.getHours();
-                if (currentHour !== lastHour) {
-                    userData.hourlyTasksCompleted = 0;
-                    saveUserData();
-                }
-            }
+            // Reset daily and hourly tasks
+            const lastTaskDate = userData.lastTaskTime ? new Date(userData.lastTaskTime) : null;
             
+            if (!lastTaskDate || lastTaskDate.toDateString() !== now.toDateString()) {
+                // New day, reset daily tasks
+                userData.dailyTasksCompleted = 0;
+            }
+            if (!lastTaskDate || lastTaskDate.getHours() !== now.getHours()) {
+                // New hour, reset hourly tasks
+                userData.hourlyTasksCompleted = 0;
+            }
+            saveUserData(); // Save resets immediately
+
+            // Re-fetch elements after potential screen changes
+            const dailyTasksElement = document.getElementById('daily-tasks');
+            const hourlyTasksElement = document.getElementById('hourly-tasks');
+
+            if (dailyTasksElement) dailyTasksElement.textContent = userData.dailyTasksCompleted + '/' + DAILY_ADS_LIMIT;
+            if (hourlyTasksElement) hourlyTasksElement.textContent = userData.hourlyTasksCompleted + '/' + HOURLY_ADS_LIMIT;
+            
+            // Update button text with current reward
+            taskBtn.textContent = `Watch Ad (+${AD_REWARD_AMOUNT} NOT)`;
+
             // Check daily limit
-            if (userData.dailyTasksCompleted >= 30) {
+            if (userData.dailyTasksCompleted >= DAILY_ADS_LIMIT) {
                 taskBtn.disabled = true;
                 taskBtn.textContent = 'Daily Limit Reached';
                 return;
             }
             
             // Check hourly limit
-            if (userData.hourlyTasksCompleted >= 15) {
+            if (userData.hourlyTasksCompleted >= HOURLY_ADS_LIMIT) {
                 taskBtn.disabled = true;
                 taskBtn.textContent = 'Hourly Limit Reached';
                 return;
@@ -675,7 +855,6 @@
             
             // Task is available
             taskBtn.disabled = false;
-            taskBtn.textContent = 'Watch Ad (+3 NOT)';
         }
         
         // Show ad and reward user
@@ -688,31 +867,27 @@
             adStatus.textContent = '';
             adStatus.style.color = '';
             
-            // Show ad from GigaPub
             if (window.showGiga) {
                 window.showGiga()
                     .then(() => {
-                        // Ad completed successfully
                         adStatus.textContent = 'Ad completed successfully!';
                         adStatus.style.color = 'green';
                         completeTask();
                     })
                     .catch(e => {
-                        // Ad failed
                         console.error('Ad error:', e);
                         adStatus.textContent = 'Ad failed. Please try again.';
                         adStatus.style.color = 'red';
                         taskBtn.disabled = false;
-                        taskBtn.textContent = 'Watch Ad (+3 NOT)';
+                        taskBtn.textContent = `Watch Ad (+${AD_REWARD_AMOUNT} NOT)`;
                     });
             } else {
-                // Fallback if ad script not loaded
-                adStatus.textContent = 'Ad service not available. Trying fallback...';
+                adStatus.textContent = 'Ad service not available. Simulating...';
                 adStatus.style.color = 'orange';
                 
                 setTimeout(() => {
                     completeTask();
-                    adStatus.textContent = 'Fallback reward granted!';
+                    adStatus.textContent = 'Simulated Ad completed!';
                     adStatus.style.color = 'green';
                 }, 1000);
             }
@@ -720,10 +895,8 @@
         
         // Complete a task
         function completeTask() {
-            const taskBtn = document.getElementById('task-btn');
-            
-            userData.balance += 3;
-            userData.totalEarnings += 3;
+            userData.balance += AD_REWARD_AMOUNT;
+            userData.totalEarnings += AD_REWARD_AMOUNT;
             userData.dailyTasksCompleted++;
             userData.lifetimeTasksCompleted++;
             userData.hourlyTasksCompleted++;
@@ -733,10 +906,8 @@
             updateBalances();
             updateTaskCounts();
             updateStats();
-            checkTaskAvailability();
             saveUserData();
-            
-            taskBtn.textContent = 'Watch Ad (+3 NOT)';
+            checkTaskAvailability(); // Re-check availability immediately
         }
         
         // Claim daily reward
@@ -744,6 +915,11 @@
             const today = new Date().toDateString();
             const reward = 2;
             
+            if (userData.lastCheckin === today) {
+                alert('You have already claimed your daily reward today.');
+                return;
+            }
+
             userData.balance += reward;
             userData.totalEarnings += reward;
             userData.lastCheckin = today;
@@ -779,21 +955,45 @@
             
             alert('Telegram join verified! You earned 4 NOT.');
         }
+
+        function updateReferralWarning() {
+            const referralWarning = document.getElementById('referral-warning');
+            const currentReferralsSpan = document.getElementById('current-referrals');
+            const withdrawButton = document.querySelector('#withdraw-screen .btn');
+
+            if (userData.referrals < REQUIRED_REFERRALS) {
+                referralWarning.style.display = 'block';
+                currentReferralsSpan.textContent = userData.referrals;
+                withdrawButton.disabled = true;
+            } else {
+                referralWarning.style.display = 'none';
+                withdrawButton.disabled = false;
+            }
+        }
         
-        // Request withdrawal - sends to Telegram channel
+        // Request withdrawal
         function requestWithdrawal() {
             const amount = parseInt(document.getElementById('withdraw-amount').value);
             const address = document.getElementById('withdraw-address').value.trim();
             const isAtani = document.getElementById('atani').checked;
             const method = isAtani ? 'Atani (ID: 1021)' : 'Binance';
+            const statusDiv = document.getElementById('withdrawal-status');
+            const statusMessage = document.getElementById('status-message');
             
+            statusDiv.style.display = 'none'; // Hide previous status
+
+            if (userData.referrals < REQUIRED_REFERRALS) {
+                alert(`You need ${REQUIRED_REFERRALS} referrals to withdraw. You currently have ${userData.referrals}.`);
+                return;
+            }
+
             if (!amount || isNaN(amount)) {
                 alert('Please enter a valid amount.');
                 return;
             }
             
-            if (amount < 150) {
-                alert('Minimum withdrawal amount is 150 NOT.');
+            if (amount < MIN_WITHDRAWAL) {
+                alert(`Minimum withdrawal amount is ${MIN_WITHDRAWAL} NOT.`);
                 return;
             }
             
@@ -807,79 +1007,81 @@
                 return;
             }
             
-            // Deduct from balance
+            // Simulate withdrawal deduction
             userData.balance -= amount;
             userData.withdrawals++;
             updateBalances();
+            updateStats();
             saveUserData();
             
-            // Prepare message for Telegram channel
-            const message = `📢 নতুন উইথড্র রিকুয়েস্ট!\n\n` +
-                           `• ইউজার: ${userData.userId}\n` +
-                           `• পরিমাণ: ${amount} NOT\n` +
-                           `• মেথড: ${method}\n` +
-                           `• অ্যাড্রেস: ${address}\n` +
-                           `• তারিখ: ${new Date().toLocaleString()}`;
-            
-            // Send to Telegram channel
-            sendToTelegramChannel(message);
-            
-            // Show status to user
-            const statusDiv = document.getElementById('withdrawal-status');
-            const statusMessage = document.getElementById('status-message');
-            const channelLink = document.getElementById('channel-link');
-            
+            // Display withdrawal status
             statusDiv.style.display = 'block';
-            statusDiv.className = 'withdrawal-status status-pending';
-            statusMessage.textContent = `Withdrawal request for ${amount} NOT submitted successfully!`;
-            channelLink.innerHTML = `<a href="${TELEGRAM_CHANNEL_LINK}" target="_blank">View in Telegram Channel</a>`;
+            statusDiv.className = 'withdrawal-status status-success'; // Set to success style
+            statusMessage.textContent = `Your payment of ${amount} NOT has been submitted.`;
             
-            // Reset form
+            // Clear form fields
             document.getElementById('withdraw-amount').value = '';
             document.getElementById('withdraw-address').value = '';
+
+            // This is a placeholder for real backend interaction.
+            // In a real application, you would send this data to a server.
+            console.log(`Withdrawal Request:
+            User ID: ${userData.userId}
+            Amount: ${amount} NOT
+            Method: ${method}
+            Address: ${address}
+            Date: ${new Date().toLocaleString()}`);
+            alert('Withdrawal request submitted. Your payment will be processed soon.');
+        }
+
+        // Simulate adding a referral (for testing purposes)
+        function addReferral() {
+            userData.referrals++;
+            saveUserData();
+            updateStats();
+            updateReferralWarning(); // Update warning if on withdraw screen
+            alert('A referral has been added (for testing purposes).');
         }
         
-        // Send message to Telegram channel
-        function sendToTelegramChannel(message) {
-            // Create a share link that opens Telegram with pre-filled message
-            const shareLink = `https://t.me/share/url?url=${encodeURIComponent(TELEGRAM_CHANNEL_LINK)}&text=${encodeURIComponent(message)}`;
-            
-            // Open in new tab (this is just for demo - in real app you would use a bot API)
-            window.open(shareLink, '_blank');
-            
-            // Note: In a real implementation, you would:
-            // 1. Have a server endpoint that uses the Telegram Bot API
-            // 2. Or use Telegram Webhooks
-            // But since we don't have a server, we're using this share method
-        }
-        
-        // Logout
+        // Logout (client-side only for this demo)
         function logout() {
             if (confirm('Are you sure you want to log out?')) {
-                alert('You have been logged out. This is a demo, so no actual logout occurs.');
+                // In a real app, you would clear session data, redirect to login, etc.
+                // For this demo, we can reset user data (optional) or just confirm.
+                // localStorage.removeItem('notCoinUserData'); 
+                // userData = { /* reset to initial state */ };
+                alert('You have been logged out. For this demo, data remains.');
+                showScreen('home-screen'); // Redirect to home
             }
         }
         
         // Event listeners
         document.getElementById('checkin-btn').addEventListener('click', function() {
-            if (this.textContent === 'Claim Daily Reward') {
-                claimDailyReward();
-            }
+            claimDailyReward();
         });
         
         // Initialize the app when loaded
         window.addEventListener('DOMContentLoaded', initApp);
         
-        // Ad fallback mechanism
+        // Ad fallback mechanism (GigaPub integration)
         window.AdGigaFallback = function() {
             return new Promise((resolve) => {
-                setTimeout(resolve, 1000);
+                setTimeout(resolve, 1000); // Simulate ad loading for 1 second
             });
         };
         
         if (window.showGiga === undefined) {
             window.showGiga = () => window.AdGigaFallback();
         }
+
+        // Optional: Add a hidden way to increase referrals for testing
+        // You might uncomment this for testing only, don't leave in production unless intended
+        // document.addEventListener('keydown', (e) => {
+        //     if (e.key === 'r' && e.ctrlKey) { // Ctrl+R to add referral
+        //         addReferral();
+        //     }
+        // });
+
     </script>
 </body>
 </html>
